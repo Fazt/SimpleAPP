@@ -31,11 +31,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    //TODO: Refactorizar y añadir strings como recursos.
-    //TODO: Ordenar y Comentar el codigo.
-    //TODO: Dejar todo en ingles.
-    //TODO: Hacer pruebas unitarias.
-
     private final static String HITS = "hits";
     private final static String POST_CREATED_AT = "created_at_i";
     private final static String POST_AUTHOR = "author";
@@ -144,34 +139,10 @@ public class MainActivity extends AppCompatActivity {
                                 public void onResponse(JSONObject response) {
                                     try {
                                         JSONArray PostsArray = response.getJSONArray(HITS);//El primer elemento del Json es un array que contiene los Post como objetos, llamado "hits"
-                                        PostList.clear();//Se limpia la lista de Posts en caso de que se este haciendo un refresh
-                                        for (int i = 0; i < PostsArray.length(); i++) {
-                                            JSONObject postElements = PostsArray.getJSONObject(i);
 
-                                            //Si "title" viene null, usar "story_title", si no usar "title".
-                                            String title = postElements.getString(POST_TITLE).equals("null") ? postElements.getString(POST_STORY_TITLE) : postElements.getString(POST_TITLE);
-                                            //Si "url" viene null, usar "story_url", si no usar "url".
-                                            String url = postElements.getString(POST_URL).equals("null") ? postElements.getString(POST_STORY_URL) : postElements.getString(POST_URL);
+                                        boolean fullList = PopulateList(PostsArray);
 
-                                            PostList.add(new Post(postElements.getInt(POST_CREATED_AT), //Se crea el objeto y se añade a la lista
-                                                    postElements.getString(POST_AUTHOR),
-                                                    title,
-                                                    url,
-                                                    postElements.getString(POST_ID),
-                                                    0));
-
-                                        }
-                                        db.storePosts(PostList);
-                                        PostList.clear();
-                                        PostList = db.getPosts();//Se cargan solo los Post que ya estan el base de datos en la lista, de esta forma no se cargan Post que hayan sido eliminados por el usuario
-                                        if (PostList.isEmpty()) { //Si en este punto la lista esta vacia, significa que el usuario eliminó todos los post y no hay ninguno nuevo
-                                            Toast.makeText(getApplicationContext(), R.string.no_new_posts, Toast.LENGTH_LONG).show();
-                                        } else {
-                                            ((CustomAdapter) adapter).mDataset = PostList; //Se entrega la lista como parametro al CustomAdapter para que la despliegue
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                        if (swipeRefreshLayout != null)
-                                            swipeRefreshLayout.setRefreshing(false); //Si se estaba haciendo un refresh, este se cancela
+                                        if (fullList) PostsStorage();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                         if (swipeRefreshLayout != null)
@@ -215,6 +186,61 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         isConnected = activeNetwork != null && activeNetwork.isConnected();
         return isConnected;
+    }
+
+    /**
+     * Metodo encargado de analizar del Array de Posts y extraer los datos
+     * necesarios para crear el objeto Post a utilizar en la App.
+     *
+     * @param PostsArray
+     * @return boolean
+     */
+    public boolean PopulateList(JSONArray PostsArray) {
+        if (PostsArray == null) {
+            return false;
+        }
+
+        PostList.clear();//Se limpia la lista de Posts en caso de que se este haciendo un refresh
+        for (int i = 0; i < PostsArray.length(); i++) {
+            try {
+                JSONObject postElements = PostsArray.getJSONObject(i);
+
+                //Si "title" viene null, usar "story_title", si no usar "title".
+                String title = postElements.getString(POST_TITLE).equals("null") ? postElements.getString(POST_STORY_TITLE) : postElements.getString(POST_TITLE);
+                //Si "url" viene null, usar "story_url", si no usar "url".
+                String url = postElements.getString(POST_URL).equals("null") ? postElements.getString(POST_STORY_URL) : postElements.getString(POST_URL);
+
+                PostList.add(new Post(postElements.getInt(POST_CREATED_AT), //Se crea el objeto y se añade a la lista
+                        postElements.getString(POST_AUTHOR),
+                        title,
+                        url,
+                        postElements.getString(POST_ID),
+                        0));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Metodo encargado de entregarle la lista de Posts nuevos a la base de datos para que esta los guarde,
+     * de solicitar a la BD todos los post que estan guardados y que tienen flag activo, y de entregar
+     * esta lista al custom adapter para que sean desplegados en el recycler view en tiempo real.
+     */
+    private void PostsStorage() {
+        db.storePosts(PostList);
+        PostList.clear();
+        PostList = db.getPosts();//Se cargan solo los Post que ya estan el base de datos en la lista, de esta forma no se cargan Post que hayan sido eliminados por el usuario
+        if (PostList.isEmpty()) { //Si en este punto la lista esta vacia, significa que el usuario eliminó todos los post y no hay ninguno nuevo
+            Toast.makeText(getApplicationContext(), R.string.no_new_posts, Toast.LENGTH_LONG).show();
+        } else {
+            ((CustomAdapter) adapter).mDataset = PostList; //Se entrega la lista como parametro al CustomAdapter para que la despliegue
+            adapter.notifyDataSetChanged();
+        }
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false); //Si se estaba haciendo un refresh, este se cancela
     }
 
 }

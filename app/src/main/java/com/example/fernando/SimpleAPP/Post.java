@@ -3,14 +3,14 @@ package com.example.fernando.SimpleAPP;
 public class Post {
 
     private String ID;
-    private int Created_at;
+    private long Created_at;
     private String Author;
     private String Title;
     private String Url;
     private int Flag;
 
 
-    Post(int created_at, String author, String title, String url, String id, int flag) {
+    Post(long created_at, String author, String title, String url, String id, int flag) {
         this.Created_at = created_at;
         this.Author = author;
         this.Title = title;
@@ -19,7 +19,7 @@ public class Post {
         this.Flag = flag;
     }
 
-    public int getCreated_at() {
+    public long getCreated_at() {
         return Created_at;
     }
 

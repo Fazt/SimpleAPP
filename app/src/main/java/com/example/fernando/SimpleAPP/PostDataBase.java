@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class PostDataBase extends SQLiteOpenHelper {
 
+    private final static String DB_NAME = "posts.db";
     private final static String POST_TABLE = "POSTS";
     private final static String COL_ID = "ID";
     private final static String COL_TITLE = "Title";
@@ -21,7 +22,7 @@ public class PostDataBase extends SQLiteOpenHelper {
 
 
     public PostDataBase(Context context) {
-        super(context, "posts.db", null, 1);
+        super(context, DB_NAME, null, 1);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class PostDataBase extends SQLiteOpenHelper {
             String Url = cursor.getString(4);
             int flag = cursor.getInt(5);
 
-            if (flag == 0 && Url != null) {
+            if (flag == 0 && !Url.equals("null")) {
                 posts.add(new Post(Date, Author, Title, Url, Id, flag));
             }
         }
@@ -100,5 +101,11 @@ public class PostDataBase extends SQLiteOpenHelper {
         db.update(POST_TABLE, values, String.format("%s=%s", COL_ID, post.getID()), null);
         db.close();
 
+    }
+
+    public void ClearDB() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(POST_TABLE, null, null);
+        db.close();
     }
 }

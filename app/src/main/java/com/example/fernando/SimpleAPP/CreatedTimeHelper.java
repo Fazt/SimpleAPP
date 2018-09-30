@@ -20,10 +20,9 @@ public class CreatedTimeHelper {
      * y entregar un mensaje basado en la diferencia entre dicho tiempo y el tiempo actual
      *
      * @param date Date
-     * @param ctx Context
      * @return String
      */
-    private static String getTimeAgo(Date date, Context ctx) {
+    private String getTimeAgo(Date date) {
 
         if (date == null) {
             return null;
@@ -42,34 +41,34 @@ public class CreatedTimeHelper {
         String timeAgo;
 
         if (dim == 0) {
-            timeAgo = ctx.getResources().getString(R.string.date_util_term_less) + " " + ctx.getResources().getString(R.string.date_util_term_a) + " " + ctx.getResources().getString(R.string.date_util_unit_minute);
+            timeAgo = mContext.getResources().getString(R.string.date_util_term_less) + " " + mContext.getResources().getString(R.string.date_util_term_a) + " " + mContext.getResources().getString(R.string.date_util_unit_minute);
         } else if (dim == 1) {
-            return "1 " + ctx.getResources().getString(R.string.date_util_unit_minute);
+            return "1 " + mContext.getResources().getString(R.string.date_util_unit_minute);
         } else if (dim >= 2 && dim <= 44) {
-            timeAgo = dim + " " + ctx.getResources().getString(R.string.date_util_unit_minutes);
+            timeAgo = dim + " " + mContext.getResources().getString(R.string.date_util_unit_minutes);
         } else if (dim >= 45 && dim <= 119) {
-            timeAgo = ctx.getResources().getString(R.string.date_util_term_an) + " " + ctx.getResources().getString(R.string.date_util_unit_hour);
+            timeAgo = mContext.getResources().getString(R.string.date_util_term_an) + " " + mContext.getResources().getString(R.string.date_util_unit_hour);
         } else if (dim >= 120 && dim <= 1439) {
-            timeAgo = (Math.round(dim / 60)) + " " + ctx.getResources().getString(R.string.date_util_unit_hours);
+            timeAgo = (Math.round(dim / 60)) + " " + mContext.getResources().getString(R.string.date_util_unit_hours);
         } else if (dim >= 1440 && dim <= 2519) {
-            timeAgo = "1 " + ctx.getResources().getString(R.string.date_util_unit_day);
+            timeAgo = "1 " + mContext.getResources().getString(R.string.date_util_unit_day);
         } else if (dim >= 2520 && dim <= 43199) {
-            timeAgo = (Math.round(dim / 1440)) + " " + ctx.getResources().getString(R.string.date_util_unit_days);
+            timeAgo = (Math.round(dim / 1440)) + " " + mContext.getResources().getString(R.string.date_util_unit_days);
         } else if (dim >= 43200 && dim <= 86399) {
-            timeAgo = ctx.getResources().getString(R.string.date_util_term_a) + " " + ctx.getResources().getString(R.string.date_util_unit_month);
+            timeAgo = mContext.getResources().getString(R.string.date_util_term_a) + " " + mContext.getResources().getString(R.string.date_util_unit_month);
         } else if (dim >= 86400 && dim <= 525599) {
-            timeAgo = (Math.round(dim / 43200)) + " " + ctx.getResources().getString(R.string.date_util_unit_months);
+            timeAgo = (Math.round(dim / 43200)) + " " + mContext.getResources().getString(R.string.date_util_unit_months);
         } else if (dim >= 525600 && dim <= 655199) {
-            timeAgo = ctx.getResources().getString(R.string.date_util_term_a) + " " + ctx.getResources().getString(R.string.date_util_unit_year);
+            timeAgo = mContext.getResources().getString(R.string.date_util_term_a) + " " + mContext.getResources().getString(R.string.date_util_unit_year);
         } else if (dim >= 655200 && dim <= 914399) {
-            timeAgo = ctx.getResources().getString(R.string.date_util_prefix_over) + " " + ctx.getResources().getString(R.string.date_util_term_a) + " " + ctx.getResources().getString(R.string.date_util_unit_year);
+            timeAgo = mContext.getResources().getString(R.string.date_util_prefix_over) + " " + mContext.getResources().getString(R.string.date_util_term_a) + " " + mContext.getResources().getString(R.string.date_util_unit_year);
         } else if (dim >= 914400 && dim <= 1051199) {
-            timeAgo = ctx.getResources().getString(R.string.date_util_prefix_almost) + " 2 " + ctx.getResources().getString(R.string.date_util_unit_years);
+            timeAgo = mContext.getResources().getString(R.string.date_util_prefix_almost) + " 2 " + mContext.getResources().getString(R.string.date_util_unit_years);
         } else {
-            timeAgo = (Math.round(dim / 525600)) + " " + ctx.getResources().getString(R.string.date_util_unit_years);
+            timeAgo = (Math.round(dim / 525600)) + " " + mContext.getResources().getString(R.string.date_util_unit_years);
         }
 
-        return timeAgo + " " + ctx.getResources().getString(R.string.date_util_suffix);
+        return timeAgo + " " + mContext.getResources().getString(R.string.date_util_suffix);
     }
 
 
@@ -102,11 +101,11 @@ public class CreatedTimeHelper {
      * @param timestamp int
      * @return String
      */
-    public String getDate(int timestamp) {
+    public String getDate(long timestamp) {
 
-        long unixSeconds = (long) timestamp;
+        long unixSeconds = timestamp;
         Date date = new java.util.Date(unixSeconds * 1000L);
-        return getTimeAgo(date, mContext);
+        return getTimeAgo(date);
     }
 
     //endregion
