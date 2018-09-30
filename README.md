@@ -3,7 +3,7 @@ This simple app was writen in Java and consume an API from Hacker News to displa
 
 ## Prerequisites
 
-To run this APP you need Android Studio installed (minimum recommended version 3.1.4)  with all its dependencies and a device or emulator with at least Android API 22.
+To run this APP you need Android Studio installed (minimum recommended version 3.1.4)  with all it's dependencies, and an Android device or emulator with at least Android API 22.
 
 ##  Create an emulator.
 
