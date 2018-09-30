@@ -7,4 +7,4 @@ To run this APP you need Android Studio installed (minimum recommended version 3
 
 ##  Create an emulator.
 
-If you don't have Android Device to test the app, you need to install an emulator using de AVD Manager in Android Studio with API 22 as a minimum.
+If you don't have an Android Device to test the app, you need to install an emulator using de AVD Manager in Android Studio with API 22 as a minimum.
