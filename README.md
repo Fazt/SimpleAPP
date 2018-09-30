@@ -1,5 +1,5 @@
 # SimpleAPP
-This simple app was written in Java and consume an API from Hacker News to display news about Android on a list.
+This simple app was written in Java and consume an API from Hacker News to display news about Android on a list and allow the user to visit the url of the post.
 
 ## Prerequisites
 
