@@ -1,13 +1,14 @@
 package com.example.fernando.SimpleAPP;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     //TODO: Dejar todo en ingles.
     //TODO: Hacer pruebas unitarias.
 
+    private final static String HITS = "hits";
     private final static String POST_CREATED_AT = "created_at_i";
     private final static String POST_AUTHOR = "author";
     private final static String POST_STORY_TITLE = "story_title";
@@ -77,24 +79,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void clearView(@NonNull RecyclerView recyclerView,@NonNull RecyclerView.ViewHolder viewHolder) {
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 final View foregroundView = ((CustomAdapter.MyViewHolder) viewHolder).viewForeground;
                 getDefaultUIUtil().clearView(foregroundView);
             }
 
             @Override
-            public void onChildDraw(@NonNull Canvas c,@NonNull RecyclerView recyclerView,
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
                                     @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY,
-                                        int actionState, boolean isCurrentlyActive) {
+                                    int actionState, boolean isCurrentlyActive) {
                 final View foregroundView = ((CustomAdapter.MyViewHolder) viewHolder).viewForeground;
                 getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY,
                         actionState, isCurrentlyActive);
             }
 
             @Override
-            public void onChildDrawOver(@NonNull Canvas c,@NonNull RecyclerView recyclerView,
-                                    RecyclerView.ViewHolder viewHolder, float dX, float dY,
-                                    int actionState, boolean isCurrentlyActive) {
+            public void onChildDrawOver(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
+                                        RecyclerView.ViewHolder viewHolder, float dX, float dY,
+                                        int actionState, boolean isCurrentlyActive) {
                 final View foregroundView = ((CustomAdapter.MyViewHolder) viewHolder).viewForeground;
                 getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY,
                         actionState, isCurrentlyActive);
@@ -130,18 +132,18 @@ public class MainActivity extends AppCompatActivity {
     private void GetPosts() {
 
         //Se comprueba si es que existe conexion
-        if(checkNetwork()){
-            AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() { //Se ejecutan los procesos en una tarea asyncrona para no iterrumpir la UI
+        if (checkNetwork()) {
+            @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());//Mediante el uso de la libreria Volley se instancia una nueva solicitud
+                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                     //Se carga el Objeto Json desde la url y se construye el objeto Post segun los parametros necesarios extraidos (Titulo, Autor, TimeStamp, url, ObjectID)
                     JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, API_url, null,
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     try {
-                                        JSONArray PostsArray = response.getJSONArray("hits");//El primer elemento del Json es un array que contiene los Post como objetos, llamado "hits"
+                                        JSONArray PostsArray = response.getJSONArray(HITS);//El primer elemento del Json es un array que contiene los Post como objetos, llamado "hits"
                                         PostList.clear();//Se limpia la lista de Posts en caso de que se este haciendo un refresh
                                         for (int i = 0; i < PostsArray.length(); i++) {
                                             JSONObject postElements = PostsArray.getJSONObject(i);
@@ -159,19 +161,21 @@ public class MainActivity extends AppCompatActivity {
                                                     0));
 
                                         }
-                                        db.storePosts(PostList); //Se llama al metodo guardar de la base de datos.
+                                        db.storePosts(PostList);
                                         PostList.clear();
                                         PostList = db.getPosts();//Se cargan solo los Post que ya estan el base de datos en la lista, de esta forma no se cargan Post que hayan sido eliminados por el usuario
                                         if (PostList.isEmpty()) { //Si en este punto la lista esta vacia, significa que el usuario eliminó todos los post y no hay ninguno nuevo
-                                            Toast.makeText(getApplicationContext(),"No se encontraron nuevos post", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), R.string.no_new_posts, Toast.LENGTH_LONG).show();
                                         } else {
                                             ((CustomAdapter) adapter).mDataset = PostList; //Se entrega la lista como parametro al CustomAdapter para que la despliegue
                                             adapter.notifyDataSetChanged();
                                         }
-                                        if(swipeRefreshLayout!=null) swipeRefreshLayout.setRefreshing(false); //Si se estaba haciendo un refresh, este se cancela
+                                        if (swipeRefreshLayout != null)
+                                            swipeRefreshLayout.setRefreshing(false); //Si se estaba haciendo un refresh, este se cancela
                                     } catch (JSONException e) {
                                         e.printStackTrace();
-                                        if(swipeRefreshLayout!=null) swipeRefreshLayout.setRefreshing(false);
+                                        if (swipeRefreshLayout != null)
+                                            swipeRefreshLayout.setRefreshing(false);
                                     }
                                 }
                             },
@@ -179,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     Log.e("DEBUG", "error: " + error.toString());
-                                    if(swipeRefreshLayout!=null) swipeRefreshLayout.setRefreshing(false);
+                                    if (swipeRefreshLayout != null)
+                                        swipeRefreshLayout.setRefreshing(false);
                                 }
                             });
 
@@ -188,26 +193,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
             task.execute();
-        }else{ //Si no hay conexion disponible
-            Toast.makeText(getApplicationContext(),"No hay conexion", Toast.LENGTH_SHORT).show();
+        } else { //Si no hay conexion disponible
+            Toast.makeText(getApplicationContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
             PostList = db.getPosts(); //Se cargan los ultimos Post guardados en la base de datos
-            if(swipeRefreshLayout!=null) swipeRefreshLayout.setRefreshing(false);
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
         }
 
     }
 
     /**
      * Metodo encargado de determinar si existe una conexion disponible y el estado de esta.
+     *
      * @return Boolean
      */
-    private boolean checkNetwork(){
+    private boolean checkNetwork() {
 
         boolean isConnected;
 
-        ConnectivityManager connectivityManager =(ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        isConnected = activeNetwork!= null && activeNetwork.isConnected();
+        isConnected = activeNetwork != null && activeNetwork.isConnected();
         return isConnected;
     }
 

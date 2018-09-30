@@ -1,8 +1,8 @@
 package com.example.fernando.SimpleAPP;
 
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.webkit.WebViewClient;
 
@@ -19,9 +19,9 @@ public class WebView extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Back");
+        actionBar.setTitle(R.string.Back);
 
-        String url=getIntent().getStringExtra("url");
+        String url = getIntent().getStringExtra("url");
         webview.setWebViewClient(new WebViewClient());
         webview.getSettings().setJavaScriptEnabled(true);
         webview.loadUrl(url);

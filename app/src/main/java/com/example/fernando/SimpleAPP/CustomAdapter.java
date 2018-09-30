@@ -38,6 +38,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     /**
      * Constructor, pide como parametro una lista de Posts
+     *
      * @param myDataset
      */
     public CustomAdapter(ArrayList<Post> myDataset) {
@@ -57,10 +58,8 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
 
-        //Se crea una instancia de la clase CreatedTimeHelper
         CreatedTimeHelper timeHelper = new CreatedTimeHelper(holder.itemView.getContext());
 
-        //Se cargan el titulo y el author del objeto Post en esta posicion de la lista de Posts
         holder.title.setText(mDataset.get(position).getTitle());
         holder.author.setText(mDataset.get(position).getAuthor());
 
@@ -86,6 +85,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     /**
      * Método encargado de remover un Post de la lista y notificarlo para reagrupar los elementos
+     *
      * @param position
      */
     public void removePost(int position) {
@@ -95,6 +95,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
     /**
      * Método encargado de abrir la url asociada al Post que tocó el usuario
+     *
      * @param view
      * @param position
      */

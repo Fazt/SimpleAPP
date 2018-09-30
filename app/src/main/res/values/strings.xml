@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">API_HTTPTest</string>
-    <!-- Date Util -->
+    <string name="app_name">SimpleApp</string>
+    <string name="no_new_posts">No new posts where found</string>
+    <string name="no_connection">No connection</string>
+    <string name="Back">Back</string>
+    <string name="URL">url</string>
+    <!-- Date Utils -->
     <string name="date_util_term_less">less than</string>
     <string name="date_util_term_a">a</string>
     <string name="date_util_term_an">an</string>
